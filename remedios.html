@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Remédios</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Barra superior */
+    .topbar {
+        background-color: #333;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        padding: 25px;
+        z-index: 2000;
+    }
+
+    /* Botão do menu em caixinha */
+    .menu-btn {
+        background-color: #444;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 15px;
+        border-radius: 6px;
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        user-select: none;
+    }
+
+    /* Menu lateral */
+    .sidebar {
+        position: fixed;
+        left: -200px; /* escondido inicialmente */
+        top: 0;
+        width: 200px;
+        height: 100%;
+        background-color: #444;
+        padding-top: 60px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar a {
+        display: block;
+        color: white;
+        padding: 10px;
+        text-decoration: none;
+    }
+
+    .sidebar a:hover {
+        background-color: #666;
+    }
+
+    .sidebar.show {
+        left: 0; /* aparece */
+    }
+
+    /* Estilo tabelas */
+    table {
+        width: 100%;
+        max-width: 1000px;
+        border-collapse: collapse;
+        margin: 20px auto;
+        table-layout: auto;
+        background: #fff;
+        text-align: center;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        word-wrap: break-word;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    h1 {
+        text-align: center;
+        color: #000000;
+        margin-top: 40px;
+    }
+
+    h2{
+        text-align: center;
+        color: #333;
+        margin-top: 40px;
+    }
+
+    /* ESTILO DE INPUT E BUTTON - FORA DO @MEDIA */
+
+.input-container {
+  display: flex;
+  flex-direction: column; /* Inputs um embaixo do outro */
+  align-items: center;    /* Centraliza horizontalmente */
+  margin-top: 20px;
+}
+
+.input-container input {
+  width: 250px;            /* Mantém uma largura fixa para centralizar */
+  margin: 5px 0;           /* Espaçamento entre inputs */
+  padding: 5px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: 0.3s;
+}
+
+.input-container input:focus {
+  border-color: #666;
+  box-shadow: 0 0 6px rgba(102, 102, 102, 0.4);
+}
+
+.input-container button {
+  width: 120px;
+  margin-top: 10px;
+  padding: 5px 9px;
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.input-container button:hover {
+  background-color: #555;
+}
+
+    /* RESPONSIVO PARA MOBILE */
+    @media (max-width: 768px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+
+        thead tr {
+            display: none;
+        }
+
+        tr {
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        td {
+            border: none;
+            padding: 5px 0;
+            position: relative;
+            padding-left: 50%;
+        }
+
+        td::before {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        td:nth-child(1)::before { content: "Nome"; }
+        td:nth-child(2)::before { content: "Horário e dose"; }
+        td:nth-child(3)::before { content: "Horário 2 e dose"; }
+    }
+</style>
+
+            
+    </style>
+</head>
+<body>
+
+<!-- Barra superior -->
+<div class="topbar">
+    <div class="menu-btn" onclick="toggleMenu()">&#9776; Menu</div>
+</div>
+
+<!-- Menu lateral -->
+<div id="sidebar" class="sidebar">
+    <a href="http://127.0.0.1:5500/index.html">Início</a>
+    <a href="http://127.0.0.1:5500/remedios.html">Horário dos remédios</a>
+    <a href="#">Cuidador responsável</a>
+    <a href="#">Remédios e quantidade disponível</a>
+    <a href="#">Medicos</a>
+</div>
+
+<!-- Conteúdo principal -->
+<h2 id="nomeUsuario"></h2>
+
+<table id="tabela">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Horário e dose</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+<div class="input-container">
+<!-- Input para o nome da pessoa -->
+<input type="text" id="nomePessoa" placeholder="Digite seu nome">
+
+<!-- Botão para confirmar o nome -->
+<button type="button" onclick="atualizarNome()">Confirmar Nome</button>
+  <input type="text" id="remedio" placeholder="Digite o nome do remédio">
+  <input type="text" id="dose" placeholder="Digite a hora e dose do remédio">
+  
+  <button onclick="adicionarRemedio()" type="button">Adicionar</button>
+</div>
+
+<script>
+//  menu
+function toggleMenu() {
+    document.getElementById("sidebar").classList.toggle("show");
+}
+
+// Limpar inputs ao focar e carregar remédios — só uma vez
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("remedio").addEventListener("focus", function() {
+        this.value = "";
+    });
+    document.getElementById("dose").addEventListener("focus", function() {
+        this.value = "";
+    });
+
+    carregarRemedios();
+});
+
+function adicionarRemedio() {
+  let nome = document.getElementById("remedio").value;
+  let dose = document.getElementById("dose").value;
+
+  if (nome === "" || dose === "") {
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  // adiciona na tabela
+  let tabela = document.getElementById("tabela").getElementsByTagName("tbody")[0];
+  let novaLinha = tabela.insertRow();
+  novaLinha.insertCell(0).innerHTML = nome;
+  novaLinha.insertCell(1).innerHTML = dose;
+
+  // cria célula do botão remover
+  let cellRemover = novaLinha.insertCell(2);
+  let btnRemover = document.createElement("button");
+  btnRemover.innerText = "Remover";
+  btnRemover.onclick = function() {
+      novaLinha.remove(); // remove a linha
+      salvarRemedios();   // atualiza localStorage
+  };
+  btnRemover.style.backgroundColor = "#666";
+  btnRemover.style.color = "white";
+  btnRemover.style.border = "none";
+  btnRemover.style.borderRadius = "8px";
+  btnRemover.style.padding = "5px 9px";
+  btnRemover.style.cursor = "pointer";
+  btnRemover.onmouseover = function() { btnRemover.style.backgroundColor = "#555"; }
+  btnRemover.onmouseout = function() { btnRemover.style.backgroundColor = "#666"; }
+
+  cellRemover.appendChild(btnRemover);
+
+  // salva no localStorage
+  salvarRemedios();
+
+  // limpa os inputs
+  document.getElementById("remedio").value = "";
+  document.getElementById("dose").value = "";
+}
+
+function salvarRemedios() {
+    let dados = [];
+    const linhas = document.querySelectorAll("#tabela tbody tr");
+    linhas.forEach(linha => {
+        let nome = linha.cells[0].innerText;
+        let dose = linha.cells[1].innerText;
+        dados.push({ nome, dose });
+    });
+    localStorage.setItem("remedios", JSON.stringify(dados));
+}
+
+function carregarRemedios() {
+  let dados = JSON.parse(localStorage.getItem("remedios")) || [];
+  let tabela = document.getElementById("tabela").getElementsByTagName("tbody")[0];
+  tabela.innerHTML = ""; // limpa antes de recriar
+
+  dados.forEach(item => {
+    let novaLinha = tabela.insertRow();
+    novaLinha.insertCell(0).innerHTML = item.nome;
+    novaLinha.insertCell(1).innerHTML = item.dose;
+
+    // cria célula do botão remover
+    let cellRemover = novaLinha.insertCell(2);
+    let btnRemover = document.createElement("button");
+    btnRemover.innerText = "Remover";
+    btnRemover.onclick = function() {
+        novaLinha.remove();
+        salvarRemedios();
+    };
+    btnRemover.style.backgroundColor = "#666";
+    btnRemover.style.color = "white";
+    btnRemover.style.border = "none";
+    btnRemover.style.borderRadius = "8px";
+    btnRemover.style.padding = "5px 9px";
+    btnRemover.style.cursor = "pointer";
+    btnRemover.onmouseover = function() { btnRemover.style.backgroundColor = "#555"; }
+    btnRemover.onmouseout = function() { btnRemover.style.backgroundColor = "#666"; }
+
+    cellRemover.appendChild(btnRemover);
+  });
+}
+  // Carregar o nome ao abrir a página:
+  document.addEventListener("DOMContentLoaded", () => {
+    // Limpar inputs ao focar
+    document.getElementById("remedio").addEventListener("focus", function() {
+        this.value = "";
+    });
+    document.getElementById("dose").addEventListener("focus", function() {
+        this.value = "";
+    });
+
+    // Carregar remédios e nome salvo
+    carregarRemedios();
+    document.getElementById("nomeUsuario").innerText = localStorage.getItem("nomeUsuario") || "";
+});
+
+
+
+
+  function atualizarNome() {
+    let nome = document.getElementById("nomePessoa").value;
+    if(nome.trim() !== "") {
+        document.getElementById("nomeUsuario").innerText = nome;
+        localStorage.setItem("nomeUsuario", nome);
+    }
+}
+
+// Carregar nome salvo ao abrir a página
+document.addEventListener("DOMContentLoaded", () => {
+    let nomeSalvo = localStorage.getItem("nomeUsuario") || "";
+    document.getElementById("nomeUsuario").innerText = nomeSalvo;
+});
+
+
+</script>
+
+</body>
+</html>
+
+
+
