@@ -188,6 +188,7 @@
 
         td:nth-child(1)::before { content: "Nome"; }
         td:nth-child(2)::before { content: "Horário e dose"; }
+        td:nth-child(3)::before { content: "Medico"; }
     }
 </style>
 
@@ -218,6 +219,7 @@
         <tr>
             <th>Nome</th>
             <th>Horário e dose</th>
+            <th>Médico</th>
         </tr>
     </thead>
     <tbody>
@@ -233,6 +235,7 @@
 <button type="button" onclick="atualizarNome()">Confirmar Nome</button>
   <input type="text" id="remedio" placeholder="Digite o nome do remédio">
   <input type="text" id="dose" placeholder="Digite a hora e dose do remédio">
+  <input type="text" id="medico" placeholder="Digite o médico responsável">
   
   <button onclick="adicionarRemedio()" type="button">Adicionar</button>
 </div>
@@ -251,6 +254,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dose").addEventListener("focus", function() {
         this.value = "";
     });
+    document.getElementById("medico").addEventListener("focus", function() {
+        this.value = "";
+    });
 
     carregarRemedios();
 });
@@ -258,8 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
 function adicionarRemedio() {
   let nome = document.getElementById("remedio").value;
   let dose = document.getElementById("dose").value;
+  let medico = document.getElementById("medico").value;
 
-  if (nome === "" || dose === "") {
+  if (nome === "" || dose === ""|| medico === "") {
     alert("Preencha todos os campos!");
     return;
   }
@@ -269,9 +276,10 @@ function adicionarRemedio() {
   let novaLinha = tabela.insertRow();
   novaLinha.insertCell(0).innerHTML = nome;
   novaLinha.insertCell(1).innerHTML = dose;
+  novaLinha.insertCell(2).innerHTML = medico;
 
   // cria célula do botão remover
-  let cellRemover = novaLinha.insertCell(2);
+  let cellRemover = novaLinha.insertCell(3);
   let btnRemover = document.createElement("button");
   btnRemover.innerText = "Remover";
   btnRemover.onclick = function() {
@@ -295,6 +303,7 @@ function adicionarRemedio() {
   // limpa os inputs
   document.getElementById("remedio").value = "";
   document.getElementById("dose").value = "";
+  document.getElementById("medico").value = "";
 }
 
 function salvarRemedios() {
@@ -303,7 +312,7 @@ function salvarRemedios() {
     linhas.forEach(linha => {
         let nome = linha.cells[0].innerText;
         let dose = linha.cells[1].innerText;
-        dados.push({ nome, dose });
+        dados.push({ nome, dose, medico: linha.cells[2].innerText } );
     });
     localStorage.setItem("remedios", JSON.stringify(dados));
 }
@@ -317,6 +326,7 @@ function carregarRemedios() {
     let novaLinha = tabela.insertRow();
     novaLinha.insertCell(0).innerHTML = item.nome;
     novaLinha.insertCell(1).innerHTML = item.dose;
+    novaLinha.insertCell(2).innerHTML = item.medico;
 
     // cria célula do botão remover
     let cellRemover = novaLinha.insertCell(2);
@@ -375,7 +385,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-
 
 
 
